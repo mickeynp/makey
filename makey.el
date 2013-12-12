@@ -302,7 +302,7 @@ If you modify this make sure you reset `makey-key-mode-keymaps'
 to nil.")
 
 (defun makey-key-mode-delete-group (group master-group)
-  "Delete a group from `makey-key-mode-keymaps'."
+  "Delete a group from MASTER-GROUP"
   (let ((items (assoc group master-group)))
     (when items
       ;; reset the cache
@@ -315,7 +315,7 @@ to nil.")
     master-group))
 
 (defun makey-key-mode-add-group (group master-group)
-  "Add a new group to `makey-key-mode-keymaps'.
+  "Add a new group to MASTER-GROUP
 If there already is a group of that name then this will
 completely remove it and put in its place an empty one of the
 same name."
@@ -368,13 +368,6 @@ DESC should be a brief description of the binding."
   "Retrieve the options for the group FOR-GROUP.
 This includes switches, commands and arguments."
   (funcall (intern (concat "makey-key-mode-options-for-" (symbol-name for-group)))))
-;; (defun makey-key-mode-options-for-group (for-group)
-;;   "Retrieve the options for the group FOR-GROUP.
-;; This includes switches, commands and arguments."
-;;   (or (cdr (assoc for-group))
-;;       (error "Unknown group '%s'" for-group)))
-
-;;; Commands
 
 (defun makey-key-mode-help (for-group)
   "Provide help for a key within FOR-GROUP
@@ -388,14 +381,14 @@ The user is prompted for the key."
                          ""))))
          (actions (cdr (assoc 'actions opts))))
     (cond
-      ;; if it is an action popup the help for the to-be-run function
-      ((assoc seq actions) (describe-function (nth 2 (assoc seq actions))))
-      ;; if there is "?" show a man page if there is one
-      ((equal seq "?")
-       (if man-page
-           (man man-page)
-         (error "No man page associated with `%s'" for-group)))
-      (t (error "No help associated with `%s'" seq)))))
+     ;; if it is an action popup the help for the to-be-run function
+     ((assoc seq actions) (describe-function (nth 2 (assoc seq actions))))
+     ;; if there is "?" show a man page if there is one
+     ((equal seq "?")
+      (if man-page
+          (man man-page)
+        (error "No man page associated with `%s'" for-group)))
+     (t (error "No help associated with `%s'" seq)))))
 
 (defun makey-key-mode-exec-at-point ()
   "Run action/args/option at point."
@@ -634,7 +627,7 @@ the key combination highlighted before the description."
   (makey-key-mode-draw-buttons "Actions" actions nil))
 
 (defun makey-key-mode-draw-buttons (section xs maker
-                                    &optional one-col-each)
+                                            &optional one-col-each)
   (when xs
     (makey-key-mode-draw-header section)
     (makey-key-mode-draw-in-cols
@@ -674,12 +667,14 @@ Return the point before the actions part, if any, nil otherwise."
   (let* ((options (makey-key-mode-options-for-group for-group))
          (switches (cdr (assoc 'switches options)))
          (arguments (cdr (assoc 'arguments options)))
+         (description (cdr (assoc 'description options)))
          (actions (cdr (assoc 'actions options)))
          (p nil))
     (makey-key-mode-draw-switches switches)
     (makey-key-mode-draw-args arguments)
     (when actions (setq p (point-marker)))
     (makey-key-mode-draw-actions actions)
+    (setq header-line-format description)
     (insert "\n")
     p))
 
@@ -693,9 +688,10 @@ Return the point before the actions part, if any, nil otherwise."
 (defun makey-key-mode-generate (group-name group-details)
   "Generate the key-group-name menu for GROUP."
   (let ((opts group-details))
-    (eval `(defun ,(intern (concat "makey-key-mode-options-for-" (symbol-name group-name))) nil
-             "Dynamic function that returns the group options for a group"
-             ',group-details))
+    (eval
+     `(defun ,(intern (concat "makey-key-mode-options-for-" (symbol-name group-name))) nil
+        ,(concat "Options menu helper function for " (symbol-name group-name))
+        ',group-details))
     (eval
      `(defun ,(intern (concat "makey-key-mode-popup-" (symbol-name group-name))) nil
         ,(concat "Key menu for " (symbol-name group-name))
@@ -710,29 +706,33 @@ Return the point before the actions part, if any, nil otherwise."
              '(when (local-variable-p 'makey-diff-options)
                 makey-diff-options))))))))
 
-;; create the interactive functions for the key mode popups (which are
-;; applied in the top-level key maps)
-;; (mapc (lambda (g)
-;;         (makey-key-mode-generate (car g)))
-;;       makey-key-mode-groups)
-(defvar makey-test-group
-  '(
-    (occur
-     (man-page "")
-     (actions
-      ("_" "Forward Symbol" isearch-forward-symbol)
-      ("w" "Forward Word" isearch-forward-word)
-      ("o" "Occur" occur))
-     (switches
-      ("-ff" "Fast-forward only" "--ff-only")
-      ("-nf" "No fast-forward" "--no-ff")
-      ("-sq" "Squash" "--squash"))
-     (arguments
-      ("-st" "Strategy" "--strategy=" read-from-minibuffer))))
-  "Test master group")
+(defun makey-initialize-key-groups (key-group)
+  "Initializes KEY-GROUP and creates all the relevant interactive commands."
+  (setq makey-key-mode-keymaps nil)
+  (mapc (lambda (g)
+          (makey-key-mode-generate (car g) (cdr g)))
+        key-group))
 
+;;; this initializes the default Magit popups.
+;(makey-initialize-key-groups makey-key-mode-groups)
 
-;;;;###autoload (mapc (lambda (g) (eval `(autoload ',(intern (concat "makey-key-mode-popup-" (symbol-name (car g)))) "makey-key-mode" ,(concat "Key menu for " (symbol-name (car g))) t))) makey-key-mode-groups)
+(makey-initialize-key-groups '((test
+                               (description "Test Description for `ls'")
+                               (man-page "ls")
+                               (actions
+                                ("l" "Long Listing Format" nil)
+                                ("s" "Short Listing Format" nil))
+                               (switches
+                                ("-a" "Show entries starting with .")
+                                ("-h" "Print sizes in human readable format"))
+                               (arguments
+                                ("-fo" "format across" "--format="
+                                 (lambda (dummy) (interactive)
+                                   (ido-completing-read '("across" "commas" "horizontal" "long"
+                                                          "single-column" "verbose" "vertical")))))
+                               )))
+
+;;;###autoload (mapc (lambda (g) (eval `(autoload ',(intern (concat "makey-key-mode-popup-" (symbol-name (car g)))) "makey-key-mode" ,(concat "Key menu for " (symbol-name (car g))) t))) makey-key-mode-groups)
 
 (provide 'makey-key-mode)
 ;; Local Variables:
