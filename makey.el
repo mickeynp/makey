@@ -448,6 +448,7 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
                     ;;            (car k) for-group)
                     ;;   (ding)
                     ;;   (sit-for 2))
+                    (define-key map (kbd (car k))
                       `(lambda () (interactive) ,action)))))
       (dolist (k actions)
         (funcall defkey k `(makey-key-mode-command ',(nth 2 k))))
