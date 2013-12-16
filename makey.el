@@ -442,13 +442,12 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
                                  (makey-key-mode-help ',for-group)))
 
     (let ((defkey (lambda (k action)
-                    (when (and (lookup-key map (car k))
-                               (not (numberp (lookup-key map (car k)))))
-                      (message "Warning: overriding binding for `%s' in %S"
-                               (car k) for-group)
-                      (ding)
-                      (sit-for 2))
-                    (define-key map (car k)
+                    ;; (when (and (lookup-key map (car k))
+                    ;;            (not (numberp (lookup-key map (car k)))))
+                    ;;   (message "Warning: overriding binding for `%s' in %S"
+                    ;;            (car k) for-group)
+                    ;;   (ding)
+                    ;;   (sit-for 2))
                       `(lambda () (interactive) ,action)))))
       (dolist (k actions)
         (funcall defkey k `(makey-key-mode-command ',(nth 2 k))))
