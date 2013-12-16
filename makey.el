@@ -422,6 +422,7 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
          (actions (cdr (assoc 'actions options)))
          (switches (cdr (assoc 'switches options)))
          (arguments (cdr (assoc 'arguments options)))
+         (lisp-variables (cdr (assoc 'lisp-variables options)))
          (map (make-sparse-keymap)))
     (suppress-keymap map 'nodigits)
     ;; ret dwim
@@ -454,6 +455,9 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
         (funcall defkey k `(makey-key-mode-command ',(nth 2 k))))
       (dolist (k switches)
         (funcall defkey k `(makey-key-mode-toggle-option ',for-group ,(nth 2 k))))
+      (dolist (k lisp-variables)
+        (funcall defkey k `(makey-key-mode-add-lisp-variable
+                            ',for-group ,(nth 2 k) ',(nth 3 k))))
       (dolist (k arguments)
         (funcall defkey k `(makey-key-mode-add-argument
                             ',for-group ,(nth 2 k) ',(nth 3 k)))))
@@ -471,6 +475,10 @@ For internal use.  Used by the command that's eventually invoked.")
   "A hash-table of current argument set.
 These will eventually make it to the git command-line.")
 
+(defvar makey-key-mode-current-variables nil
+  "A hash-table of current lisp variables set.
+These will get let-bound when an action is called")
+
 (defvar makey-key-mode-current-options nil
   "Current option set.
 These will eventually make it to the git command-line.")
@@ -485,10 +493,22 @@ Do not customize this (used in the `makey-key-mode' implementation).")
     (maphash (lambda (k v)
                (push (concat k v) makey-custom-options))
              makey-key-mode-current-args)
+    (let ((local-let-cells '()))
+      (maphash (lambda (k v)
+                 (add-to-list 'local-let-cells
+                              (list (intern k) v)))
+               makey-key-mode-current-variables)
+      (eval `(let* ,local-let-cells
+               (when func
+                 (call-interactively func)))))
     (set-window-configuration makey-pre-key-mode-window-conf)
-    (kill-buffer makey-key-mode-last-buffer)
-    (when func
-      (call-interactively func))))
+    (kill-buffer makey-key-mode-last-buffer)))
+
+
+(defun makey-key-mode-add-lisp-variable (for-group lisp-variable-name input-func)
+  (let ((input (funcall input-func (concat lisp-variable-name ": "))))
+    (puthash lisp-variable-name input makey-key-mode-current-variables)
+    (makey-key-mode-redraw for-group)))
 
 (defun makey-key-mode-add-argument (for-group arg-name input-func)
   (let ((input (funcall input-func (concat arg-name ": "))))
@@ -537,6 +557,9 @@ the key combination highlighted before the description."
          original-opts)
     (set (make-local-variable
           'makey-key-mode-current-args)
+         (make-hash-table))
+    (set (make-local-variable
+          'makey-key-mode-current-variables)
          (make-hash-table))
     (set (make-local-variable 'makey-key-mode-prefix) current-prefix-arg)
     (makey-key-mode-redraw for-group))
@@ -599,7 +622,7 @@ the key combination highlighted before the description."
 (defvar makey-key-mode-args-in-cols nil
   "When true, draw arguments in columns as with switches and options.")
 
-(defun makey-key-mode-draw-args (args)
+(defun makey-key-mode-draw-args (args hash-table)
   "Draw the args part of the menu."
   (makey-key-mode-draw-buttons
    "Args"
@@ -607,7 +630,7 @@ the key combination highlighted before the description."
    (lambda (x)
      (format "(%s) %s"
              (nth 2 x)
-             (propertize (gethash (nth 2 x) makey-key-mode-current-args "")
+             (propertize (gethash (nth 2 x) hash-table "")
                          'face 'makey-key-mode-args-face)))
    (not makey-key-mode-args-in-cols)))
 
@@ -667,11 +690,13 @@ Return the point before the actions part, if any, nil otherwise."
   (let* ((options (makey-key-mode-options-for-group for-group))
          (switches (cdr (assoc 'switches options)))
          (arguments (cdr (assoc 'arguments options)))
+         (lisp-variables (cdr (assoc 'lisp-variables options)))
          (description (cdr (assoc 'description options)))
          (actions (cdr (assoc 'actions options)))
          (p nil))
     (makey-key-mode-draw-switches switches)
-    (makey-key-mode-draw-args arguments)
+    (makey-key-mode-draw-args arguments makey-key-mode-current-args)
+    (makey-key-mode-draw-args lisp-variables makey-key-mode-current-variables)
     (when actions (setq p (point-marker)))
     (makey-key-mode-draw-actions actions)
     (setq header-line-format description)
