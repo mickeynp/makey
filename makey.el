@@ -60,246 +60,246 @@
   "Face for key mode switch arguments."
   :group 'makey-faces)
 
-;;; Keygroups
-;;;###autoload
-(defvar makey-key-mode-groups
-  '((dispatch
-     (actions
-      ("b" "Branching"       makey-key-mode-popup-branching)
-      ("B" "Bisecting"       makey-key-mode-popup-bisecting)
-      ("c" "Committing"      makey-key-mode-popup-committing)
-      ("d" "Diff worktree"   makey-diff-working-tree)
-      ("D" "Diff"            makey-diff)
-      ("f" "Fetching"        makey-key-mode-popup-fetching)
-      ("F" "Pulling"         makey-key-mode-popup-pulling)
-      ("g" "Refresh Buffers" makey-refresh-all)
-      ("l" "Logging"         makey-key-mode-popup-logging)
-      ("m" "Merging"         makey-key-mode-popup-merging)
-      ("M" "Remoting"        makey-key-mode-popup-remoting)
-      ("P" "Pushing"         makey-key-mode-popup-pushing)
-      ("o" "Submoduling"     makey-key-mode-popup-submodule)
-      ("r" "Rewriting"       makey-key-mode-popup-rewriting)
-      ("s" "Show Status"     makey-status)
-      ("S" "Stage all"       makey-stage-all)
-      ("t" "Tagging"         makey-key-mode-popup-tagging)
-      ("U" "Unstage all"     makey-unstage-all)
-      ("v" "Show Commit"     makey-show-commit)
-      ("V" "Show File"       makey-show)
-      ("w" "Wazzup"          makey-wazzup)
-      ("X" "Reset worktree"  makey-reset-working-tree)
-      ("y" "Cherry"          makey-cherry)
-      ("z" "Stashing"        makey-key-mode-popup-stashing)
-      ("!" "Running"         makey-key-mode-popup-running)
-      ("$" "Show Process"    makey-display-process)))
+;; ;;; Keygroups
+;; ;;;###autoload
+;; (defvar makey-key-mode-groups
+;;   '((dispatch
+;;      (actions
+;;       ("b" "Branching"       makey-key-mode-popup-branching)
+;;       ("B" "Bisecting"       makey-key-mode-popup-bisecting)
+;;       ("c" "Committing"      makey-key-mode-popup-committing)
+;;       ("d" "Diff worktree"   makey-diff-working-tree)
+;;       ("D" "Diff"            makey-diff)
+;;       ("f" "Fetching"        makey-key-mode-popup-fetching)
+;;       ("F" "Pulling"         makey-key-mode-popup-pulling)
+;;       ("g" "Refresh Buffers" makey-refresh-all)
+;;       ("l" "Logging"         makey-key-mode-popup-logging)
+;;       ("m" "Merging"         makey-key-mode-popup-merging)
+;;       ("M" "Remoting"        makey-key-mode-popup-remoting)
+;;       ("P" "Pushing"         makey-key-mode-popup-pushing)
+;;       ("o" "Submoduling"     makey-key-mode-popup-submodule)
+;;       ("r" "Rewriting"       makey-key-mode-popup-rewriting)
+;;       ("s" "Show Status"     makey-status)
+;;       ("S" "Stage all"       makey-stage-all)
+;;       ("t" "Tagging"         makey-key-mode-popup-tagging)
+;;       ("U" "Unstage all"     makey-unstage-all)
+;;       ("v" "Show Commit"     makey-show-commit)
+;;       ("V" "Show File"       makey-show)
+;;       ("w" "Wazzup"          makey-wazzup)
+;;       ("X" "Reset worktree"  makey-reset-working-tree)
+;;       ("y" "Cherry"          makey-cherry)
+;;       ("z" "Stashing"        makey-key-mode-popup-stashing)
+;;       ("!" "Running"         makey-key-mode-popup-running)
+;;       ("$" "Show Process"    makey-display-process)))
 
-    (logging
-     (man-page "git-log")
-     (actions
-      ("l" "Short" makey-log)
-      ("L" "Long" makey-log-long)
-      ("h" "Head Reflog" makey-reflog-head)
-      ("f" "File log" makey-file-log)
-      ("rl" "Ranged short" makey-log-ranged)
-      ("rL" "Ranged long" makey-log-long-ranged)
-      ("rh" "Reflog" makey-reflog))
-     (switches
-      ("-m" "Only merge commits" "--merges")
-      ("-do" "Date Order" "--date-order")
-      ("-f" "First parent" "--first-parent")
-      ("-i" "Case insensitive patterns" "-i")
-      ("-pr" "Pickaxe regex" "--pickaxe-regex")
-      ("-g" "Show Graph" "--graph")
-      ("-n" "Name only" "--name-only")
-      ("-am" "All match" "--all-match")
-      ("-al" "All" "--all"))
-     (arguments
-      ("=r" "Relative" "--relative=" read-directory-name)
-      ("=c" "Committer" "--committer=" read-from-minibuffer)
-      ("=>" "Since" "--since=" read-from-minibuffer)
-      ("=<" "Before" "--before=" read-from-minibuffer)
-      ("=a" "Author" "--author=" read-from-minibuffer)
-      ("=g" "Grep messages" "--grep=" read-from-minibuffer)
-      ("=G" "Grep patches" "-G" read-from-minibuffer)
-      ("=L" "Trace evolution of line range [long log only]"
-       "-L" makey-read-file-trace)
-      ("=s" "Pickaxe search" "-S" read-from-minibuffer)
-      ("=b" "Branches" "--branches=" read-from-minibuffer)
-      ("=R" "Remotes" "--remotes=" read-from-minibuffer)))
+;;     (logging
+;;      (man-page "git-log")
+;;      (actions
+;;       ("l" "Short" makey-log)
+;;       ("L" "Long" makey-log-long)
+;;       ("h" "Head Reflog" makey-reflog-head)
+;;       ("f" "File log" makey-file-log)
+;;       ("rl" "Ranged short" makey-log-ranged)
+;;       ("rL" "Ranged long" makey-log-long-ranged)
+;;       ("rh" "Reflog" makey-reflog))
+;;      (switches
+;;       ("-m" "Only merge commits" "--merges")
+;;       ("-do" "Date Order" "--date-order")
+;;       ("-f" "First parent" "--first-parent")
+;;       ("-i" "Case insensitive patterns" "-i")
+;;       ("-pr" "Pickaxe regex" "--pickaxe-regex")
+;;       ("-g" "Show Graph" "--graph")
+;;       ("-n" "Name only" "--name-only")
+;;       ("-am" "All match" "--all-match")
+;;       ("-al" "All" "--all"))
+;;      (arguments
+;;       ("=r" "Relative" "--relative=" read-directory-name)
+;;       ("=c" "Committer" "--committer=" read-from-minibuffer)
+;;       ("=>" "Since" "--since=" read-from-minibuffer)
+;;       ("=<" "Before" "--before=" read-from-minibuffer)
+;;       ("=a" "Author" "--author=" read-from-minibuffer)
+;;       ("=g" "Grep messages" "--grep=" read-from-minibuffer)
+;;       ("=G" "Grep patches" "-G" read-from-minibuffer)
+;;       ("=L" "Trace evolution of line range [long log only]"
+;;        "-L" makey-read-file-trace)
+;;       ("=s" "Pickaxe search" "-S" read-from-minibuffer)
+;;       ("=b" "Branches" "--branches=" read-from-minibuffer)
+;;       ("=R" "Remotes" "--remotes=" read-from-minibuffer)))
 
-    (running
-     (actions
-      ("!" "Command from root" makey-shell-command)
-      (":" "Git command" makey-git-command)
-      ("g" "git gui" makey-run-git-gui)
-      ("k" "gitk" makey-run-gitk)))
+;;     (running
+;;      (actions
+;;       ("!" "Command from root" makey-shell-command)
+;;       (":" "Git command" makey-git-command)
+;;       ("g" "git gui" makey-run-git-gui)
+;;       ("k" "gitk" makey-run-gitk)))
 
-    (fetching
-     (man-page "git-fetch")
-     (actions
-      ("f" "Current" makey-fetch-current)
-      ("a" "All" makey-remote-update)
-      ("o" "Other" makey-fetch))
-     (switches
-      ("-p" "Prune" "--prune")))
+;;     (fetching
+;;      (man-page "git-fetch")
+;;      (actions
+;;       ("f" "Current" makey-fetch-current)
+;;       ("a" "All" makey-remote-update)
+;;       ("o" "Other" makey-fetch))
+;;      (switches
+;;       ("-p" "Prune" "--prune")))
 
-    (pushing
-     (man-page "git-push")
-     (actions
-      ("P" "Push" makey-push)
-      ("t" "Push tags" makey-push-tags))
-     (switches
-      ("-f" "Force" "--force")
-      ("-d" "Dry run" "-n")
-      ("-u" "Set upstream" "-u")))
+;;     (pushing
+;;      (man-page "git-push")
+;;      (actions
+;;       ("P" "Push" makey-push)
+;;       ("t" "Push tags" makey-push-tags))
+;;      (switches
+;;       ("-f" "Force" "--force")
+;;       ("-d" "Dry run" "-n")
+;;       ("-u" "Set upstream" "-u")))
 
-    (pulling
-     (man-page "git-pull")
-     (actions
-      ("F" "Pull" makey-pull))
-     (switches
-      ("-f" "Force" "--force")
-      ("-r" "Rebase" "--rebase")))
+;;     (pulling
+;;      (man-page "git-pull")
+;;      (actions
+;;       ("F" "Pull" makey-pull))
+;;      (switches
+;;       ("-f" "Force" "--force")
+;;       ("-r" "Rebase" "--rebase")))
 
-    (branching
-     (man-page "git-branch")
-     (actions
-      ("v" "Branch manager" makey-branch-manager)
-      ("b" "Checkout" makey-checkout)
-      ("c" "Create" makey-create-branch)
-      ("r" "Rename" makey-rename-branch)
-      ("k" "Delete" makey-delete-branch))
-     (switches
-      ("-t" "Set upstream configuration" "--track")
-      ("-m" "Merged to HEAD" "--merged")
-      ("-M" "Merged to master" "--merged=master")
-      ("-n" "Not merged to HEAD" "--no-merged")
-      ("-N" "Not merged to master" "--no-merged=master"))
-     (arguments
-      ("=c" "Contains" "--contains=" makey-read-rev-with-default)
-      ("=m" "Merged" "--merged=" makey-read-rev-with-default)
-      ("=n" "Not merged" "--no-merged=" makey-read-rev-with-default)))
+;;     (branching
+;;      (man-page "git-branch")
+;;      (actions
+;;       ("v" "Branch manager" makey-branch-manager)
+;;       ("b" "Checkout" makey-checkout)
+;;       ("c" "Create" makey-create-branch)
+;;       ("r" "Rename" makey-rename-branch)
+;;       ("k" "Delete" makey-delete-branch))
+;;      (switches
+;;       ("-t" "Set upstream configuration" "--track")
+;;       ("-m" "Merged to HEAD" "--merged")
+;;       ("-M" "Merged to master" "--merged=master")
+;;       ("-n" "Not merged to HEAD" "--no-merged")
+;;       ("-N" "Not merged to master" "--no-merged=master"))
+;;      (arguments
+;;       ("=c" "Contains" "--contains=" makey-read-rev-with-default)
+;;       ("=m" "Merged" "--merged=" makey-read-rev-with-default)
+;;       ("=n" "Not merged" "--no-merged=" makey-read-rev-with-default)))
 
-    (remoting
-     (man-page "git-remote")
-     (actions
-      ("v" "Remote manager" makey-branch-manager)
-      ("a" "Add" makey-add-remote)
-      ("r" "Rename" makey-rename-remote)
-      ("k" "Remove" makey-remove-remote)))
+;;     (remoting
+;;      (man-page "git-remote")
+;;      (actions
+;;       ("v" "Remote manager" makey-branch-manager)
+;;       ("a" "Add" makey-add-remote)
+;;       ("r" "Rename" makey-rename-remote)
+;;       ("k" "Remove" makey-remove-remote)))
 
-    (tagging
-     (man-page "git-tag")
-     (actions
-      ("t" "Create" makey-tag)
-      ("k" "Delete" makey-delete-tag))
-     (switches
-      ("-a" "Annotate" "--annotate")
-      ("-f" "Force" "--force")
-      ("-s" "Sign" "--sign")))
+;;     (tagging
+;;      (man-page "git-tag")
+;;      (actions
+;;       ("t" "Create" makey-tag)
+;;       ("k" "Delete" makey-delete-tag))
+;;      (switches
+;;       ("-a" "Annotate" "--annotate")
+;;       ("-f" "Force" "--force")
+;;       ("-s" "Sign" "--sign")))
 
-    (stashing
-     (man-page "git-stash")
-     (actions
-      ("z" "Save" makey-stash)
-      ("s" "Snapshot" makey-stash-snapshot))
-     (switches
-      ("-k" "Keep index" "--keep-index")
-      ("-u" "Include untracked files" "--include-untracked")
-      ("-a" "Include all files" "--all")))
+;;     (stashing
+;;      (man-page "git-stash")
+;;      (actions
+;;       ("z" "Save" makey-stash)
+;;       ("s" "Snapshot" makey-stash-snapshot))
+;;      (switches
+;;       ("-k" "Keep index" "--keep-index")
+;;       ("-u" "Include untracked files" "--include-untracked")
+;;       ("-a" "Include all files" "--all")))
 
-    (committing
-     (man-page "git-commit")
-     (actions
-      ("c" "Commit" makey-commit)
-      ("a" "Amend"  makey-commit-amend)
-      ("e" "Extend" makey-commit-extend)
-      ("r" "Reword" makey-commit-reword)
-      ("f" "Fixup"  makey-commit-fixup)
-      ("s" "Squash" makey-commit-squash))
-     (switches
-      ("-r" "Replace the tip of current branch" "--amend")
-      ("-R" "Claim authorship and reset author date" "--reset-author")
-      ("-a" "Stage all modified and deleted files" "--all")
-      ("-e" "Allow empty commit" "--allow-empty")
-      ("-v" "Show diff of changes to be committed" "--verbose")
-      ("-n" "Bypass git hooks" "--no-verify")
-      ("-s" "Add Signed-off-by line" "--signoff")
-      ("-S" "Sign using gpg" "--gpg-sign")))
+;;     (committing
+;;      (man-page "git-commit")
+;;      (actions
+;;       ("c" "Commit" makey-commit)
+;;       ("a" "Amend"  makey-commit-amend)
+;;       ("e" "Extend" makey-commit-extend)
+;;       ("r" "Reword" makey-commit-reword)
+;;       ("f" "Fixup"  makey-commit-fixup)
+;;       ("s" "Squash" makey-commit-squash))
+;;      (switches
+;;       ("-r" "Replace the tip of current branch" "--amend")
+;;       ("-R" "Claim authorship and reset author date" "--reset-author")
+;;       ("-a" "Stage all modified and deleted files" "--all")
+;;       ("-e" "Allow empty commit" "--allow-empty")
+;;       ("-v" "Show diff of changes to be committed" "--verbose")
+;;       ("-n" "Bypass git hooks" "--no-verify")
+;;       ("-s" "Add Signed-off-by line" "--signoff")
+;;       ("-S" "Sign using gpg" "--gpg-sign")))
 
-    (merging
-     (man-page "git-merge")
-     (actions
-      ("m" "Merge" makey-merge)
-      ("A" "Abort" makey-merge-abort))
-     (switches
-      ("-ff" "Fast-forward only" "--ff-only")
-      ("-nf" "No fast-forward" "--no-ff")
-      ("-sq" "Squash" "--squash"))
-     (arguments
-      ("-st" "Strategy" "--strategy=" read-from-minibuffer)))
+;;     (merging
+;;      (man-page "git-merge")
+;;      (actions
+;;       ("m" "Merge" makey-merge)
+;;       ("A" "Abort" makey-merge-abort))
+;;      (switches
+;;       ("-ff" "Fast-forward only" "--ff-only")
+;;       ("-nf" "No fast-forward" "--no-ff")
+;;       ("-sq" "Squash" "--squash"))
+;;      (arguments
+;;       ("-st" "Strategy" "--strategy=" read-from-minibuffer)))
 
-    (rewriting
-     (actions
-      ("b" "Begin" makey-rewrite-start)
-      ("s" "Stop" makey-rewrite-stop)
-      ("a" "Abort" makey-rewrite-abort)
-      ("f" "Finish" makey-rewrite-finish)
-      ("*" "Set unused" makey-rewrite-set-unused)
-      ("." "Set used" makey-rewrite-set-used)))
+;;     (rewriting
+;;      (actions
+;;       ("b" "Begin" makey-rewrite-start)
+;;       ("s" "Stop" makey-rewrite-stop)
+;;       ("a" "Abort" makey-rewrite-abort)
+;;       ("f" "Finish" makey-rewrite-finish)
+;;       ("*" "Set unused" makey-rewrite-set-unused)
+;;       ("." "Set used" makey-rewrite-set-used)))
 
-    (apply-mailbox
-     (man-page "git-am")
-     (actions
-      ("J" "Apply Mailbox" makey-apply-mailbox))
-     (switches
-      ("-s" "add a Signed-off-by line to the commit message" "--signoff")
-      ("-3" "allow fall back on 3way merging if needed" "--3way")
-      ("-k" "pass -k flag to git-mailinfo" "--keep")
-      ("-c" "strip everything before a scissors line" "--scissors")
-      ("-p" "pass it through git-apply" "-p")
-      ("-r" "override error message when patch failure occurs" "--resolvemsg")
-      ("-d" "lie about committer date" "--committer-date-is-author-date")
-      ("-D" "use current timestamp for author date" "--ignore-date")
-      ("-b" "pass -b flag to git-mailinfo" "--keep-non-patch"))
-     (arguments
-      ("=p" "format the patch(es) are in" "--patch-format")))
+;;     (apply-mailbox
+;;      (man-page "git-am")
+;;      (actions
+;;       ("J" "Apply Mailbox" makey-apply-mailbox))
+;;      (switches
+;;       ("-s" "add a Signed-off-by line to the commit message" "--signoff")
+;;       ("-3" "allow fall back on 3way merging if needed" "--3way")
+;;       ("-k" "pass -k flag to git-mailinfo" "--keep")
+;;       ("-c" "strip everything before a scissors line" "--scissors")
+;;       ("-p" "pass it through git-apply" "-p")
+;;       ("-r" "override error message when patch failure occurs" "--resolvemsg")
+;;       ("-d" "lie about committer date" "--committer-date-is-author-date")
+;;       ("-D" "use current timestamp for author date" "--ignore-date")
+;;       ("-b" "pass -b flag to git-mailinfo" "--keep-non-patch"))
+;;      (arguments
+;;       ("=p" "format the patch(es) are in" "--patch-format")))
 
-    (submodule
-     (man-page "git-submodule")
-     (actions
-      ("u" "Update" makey-submodule-update)
-      ("b" "Both update and init" makey-submodule-update-init)
-      ("i" "Init" makey-submodule-init)
-      ("s" "Sync" makey-submodule-sync)))
+;;     (submodule
+;;      (man-page "git-submodule")
+;;      (actions
+;;       ("u" "Update" makey-submodule-update)
+;;       ("b" "Both update and init" makey-submodule-update-init)
+;;       ("i" "Init" makey-submodule-init)
+;;       ("s" "Sync" makey-submodule-sync)))
 
-    (bisecting
-     (man-page "git-bisect")
-     (actions
-      ("b" "Bad" makey-bisect-bad)
-      ("g" "Good" makey-bisect-good)
-      ("k" "Skip" makey-bisect-skip)
-      ("r" "Reset" makey-bisect-reset)
-      ("s" "Start" makey-bisect-start)
-      ("u" "Run" makey-bisect-run)))
+;;     (bisecting
+;;      (man-page "git-bisect")
+;;      (actions
+;;       ("b" "Bad" makey-bisect-bad)
+;;       ("g" "Good" makey-bisect-good)
+;;       ("k" "Skip" makey-bisect-skip)
+;;       ("r" "Reset" makey-bisect-reset)
+;;       ("s" "Start" makey-bisect-start)
+;;       ("u" "Run" makey-bisect-run)))
 
-    (diff-options
-     (actions
-      ("s" "Set" makey-set-diff-options)
-      ("d" "Set default" makey-set-default-diff-options)
-      ("c" "Save default" makey-save-default-diff-options)
-      ("r" "Reset to default" makey-reset-diff-options)
-      ("h" "Toggle Hunk Refinement" makey-toggle-diff-refine-hunk))
-     (switches
-      ("-m" "Show smallest possible diff" "--minimal")
-      ("-p" "Use patience diff algorithm" "--patience")
-      ("-h" "Use histogram diff algorithm" "--histogram")
-      ("-b" "Ignore whitespace changes" "--ignore-space-change")
-      ("-w" "Ignore all whitespace" "--ignore-all-space")
-      ("-W" "Show surrounding functions" "--function-context"))
-     ))
-  "Holds the key, help, function mapping for the log-mode.
-If you modify this make sure you reset `makey-key-mode-keymaps'
-to nil.")
+;;     (diff-options
+;;      (actions
+;;       ("s" "Set" makey-set-diff-options)
+;;       ("d" "Set default" makey-set-default-diff-options)
+;;       ("c" "Save default" makey-save-default-diff-options)
+;;       ("r" "Reset to default" makey-reset-diff-options)
+;;       ("h" "Toggle Hunk Refinement" makey-toggle-diff-refine-hunk))
+;;      (switches
+;;       ("-m" "Show smallest possible diff" "--minimal")
+;;       ("-p" "Use patience diff algorithm" "--patience")
+;;       ("-h" "Use histogram diff algorithm" "--histogram")
+;;       ("-b" "Ignore whitespace changes" "--ignore-space-change")
+;;       ("-w" "Ignore all whitespace" "--ignore-all-space")
+;;       ("-W" "Show surrounding functions" "--function-context"))
+;;      ))
+;;   "Holds the key, help, function mapping for the log-mode.
+;; If you modify this make sure you reset `makey-key-mode-keymaps'
+;; to nil.")
 
 (defun makey-key-mode-delete-group (group master-group)
   "Delete a group from MASTER-GROUP"
@@ -422,13 +422,13 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
          (actions (cdr (assoc 'actions options)))
          (switches (cdr (assoc 'switches options)))
          (arguments (cdr (assoc 'arguments options)))
-         (lisp-variables (cdr (assoc 'lisp-variables options)))
+         (lisp-arguments (cdr (assoc 'lisp-arguments options)))
          (map (make-sparse-keymap)))
     (suppress-keymap map 'nodigits)
     ;; ret dwim
-    (define-key map (kbd "RET") 'makey-key-mode-exec-at-point)
+    ;; (define-key map (kbd "RET") 'makey-key-mode-exec-at-point)
     ;; tab jumps to the next "button"
-    (define-key map (kbd "TAB") 'makey-key-mode-jump-to-next-exec)
+    ;; (define-key map (kbd "TAB") 'makey-key-mode-jump-to-next-exec)
 
     ;; all maps should `quit' with `C-g' or `q'
     (define-key map (kbd "C-g") `(lambda ()
@@ -455,7 +455,7 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
         (funcall defkey k `(makey-key-mode-command ',(nth 2 k))))
       (dolist (k switches)
         (funcall defkey k `(makey-key-mode-toggle-option ',for-group ,(nth 2 k))))
-      (dolist (k lisp-variables)
+      (dolist (k lisp-arguments)
         (funcall defkey k `(makey-key-mode-add-lisp-variable
                             ',for-group ,(nth 2 k) ',(nth 3 k))))
       (dolist (k arguments)
@@ -493,16 +493,18 @@ Do not customize this (used in the `makey-key-mode' implementation).")
     (maphash (lambda (k v)
                (push (concat k v) makey-custom-options))
              makey-key-mode-current-args)
-    (let ((local-let-cells '()))
+    (let ((local-let-cells '())
+          (current-variables (copy-hash-table makey-key-mode-current-variables)))
+      (set-window-configuration makey-pre-key-mode-window-conf)
+      (kill-buffer makey-key-mode-last-buffer)
       (maphash (lambda (k v)
                  (add-to-list 'local-let-cells
                               (list (intern k) v)))
-               makey-key-mode-current-variables)
+               current-variables)
       (eval `(let* ,local-let-cells
                (when func
                  (call-interactively func)))))
-    (set-window-configuration makey-pre-key-mode-window-conf)
-    (kill-buffer makey-key-mode-last-buffer)))
+    ))
 
 
 (defun makey-key-mode-add-lisp-variable (for-group lisp-variable-name input-func)
@@ -690,13 +692,13 @@ Return the point before the actions part, if any, nil otherwise."
   (let* ((options (makey-key-mode-options-for-group for-group))
          (switches (cdr (assoc 'switches options)))
          (arguments (cdr (assoc 'arguments options)))
-         (lisp-variables (cdr (assoc 'lisp-variables options)))
+         (lisp-arguments (cdr (assoc 'lisp-arguments options)))
          (description (cdr (assoc 'description options)))
          (actions (cdr (assoc 'actions options)))
          (p nil))
     (makey-key-mode-draw-switches switches)
     (makey-key-mode-draw-args arguments makey-key-mode-current-args)
-    (makey-key-mode-draw-args lisp-variables makey-key-mode-current-variables)
+    (makey-key-mode-draw-args lisp-arguments makey-key-mode-current-variables)
     (when actions (setq p (point-marker)))
     (makey-key-mode-draw-actions actions)
     (setq header-line-format description)
