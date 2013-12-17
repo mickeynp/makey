@@ -1,6 +1,6 @@
 ;;; makey.el --- interactive commandline mode
 
-;; Copyright (C) 2010-2013  The Makey Project Developers.
+;; Copyright (C) 2010-2013  The Magit Project Developers.
 ;; Copyright (C) 2013 Mickey Petersen
 
 ;; Author: Mickey Petersen <mickey@masteringemacs.org>
