@@ -4,7 +4,7 @@
 ;; Copyright (C) 2013 Mickey Petersen
 
 ;; Author: Mickey Petersen <mickey@masteringemacs.org>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -741,21 +741,21 @@ Return the point before the actions part, if any, nil otherwise."
 ;;; this initializes the default Magit popups.
 ;(makey-initialize-key-groups makey-key-mode-groups)
 
-(makey-initialize-key-groups '((test
-                               (description "Test Description for `ls'")
-                               (man-page "ls")
-                               (actions
-                                ("l" "Long Listing Format" nil)
-                                ("s" "Short Listing Format" nil))
-                               (switches
-                                ("-a" "Show entries starting with .")
-                                ("-h" "Print sizes in human readable format"))
-                               (arguments
-                                ("-fo" "format across" "--format="
-                                 (lambda (dummy) (interactive)
-                                   (ido-completing-read '("across" "commas" "horizontal" "long"
-                                                          "single-column" "verbose" "vertical")))))
-                               )))
+;; (makey-initialize-key-groups '((test
+;;                                (description "Test Description for `ls'")
+;;                                (man-page "ls")
+;;                                (actions
+;;                                 ("l" "Long Listing Format" nil)
+;;                                 ("s" "Short Listing Format" nil))
+;;                                (switches
+;;                                 ("-a" "Show entries starting with .")
+;;                                 ("-h" "Print sizes in human readable format"))
+;;                                (arguments
+;;                                 ("-fo" "format across" "--format="
+;;                                  (lambda (dummy) (interactive)
+;;                                    (ido-completing-read '("across" "commas" "horizontal" "long"
+;;                                                           "single-column" "verbose" "vertical")))))
+;;                                )))
 
 ;;;###autoload (mapc (lambda (g) (eval `(autoload ',(intern (concat "makey-key-mode-popup-" (symbol-name (car g)))) "makey-key-mode" ,(concat "Key menu for " (symbol-name (car g))) t))) makey-key-mode-groups)
 
