@@ -421,6 +421,7 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
   (let* ((options (makey-key-mode-options-for-group for-group))
          (actions (cdr (assoc 'actions options)))
          (switches (cdr (assoc 'switches options)))
+         (lisp-switches (cdr (assoc 'lisp-switches options)))
          (arguments (cdr (assoc 'arguments options)))
          (lisp-arguments (cdr (assoc 'lisp-arguments options)))
          (map (make-sparse-keymap)))
@@ -451,10 +452,16 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
                     ;;   (sit-for 2))
                     (define-key map (kbd (car k))
                       `(lambda () (interactive) ,action)))))
+      (dolist (k lisp-switches)
+        (funcall defkey k `(makey-key-mode-toggle-lisp-option
+                            ',for-group
+                            ;; name on-value off-value
+                            ',(nth 2 k) ',(nth 3 k) ',(nth 4 k))))
       (dolist (k actions)
         (funcall defkey k `(makey-key-mode-command ',(nth 2 k))))
       (dolist (k switches)
         (funcall defkey k `(makey-key-mode-toggle-option ',for-group ,(nth 2 k))))
+
       (dolist (k lisp-arguments)
         (funcall defkey k `(makey-key-mode-add-lisp-variable
                             ',for-group ,(nth 2 k) ',(nth 3 k))))
@@ -472,16 +479,17 @@ Put it in `makey-key-mode-keymaps' for fast lookup."
 For internal use.  Used by the command that's eventually invoked.")
 
 (defvar makey-key-mode-current-args nil
-  "A hash-table of current argument set.
-These will eventually make it to the git command-line.")
+  "A hash-table of current argument set.")
 
-(defvar makey-key-mode-current-variables nil
+(defvar makey-key-mode-current-lisp-arguments nil
   "A hash-table of current lisp variables set.
 These will get let-bound when an action is called")
 
+(defvar makey-key-mode-current-lisp-options nil
+  "Current lisp option set.")
+
 (defvar makey-key-mode-current-options nil
-  "Current option set.
-These will eventually make it to the git command-line.")
+  "Current option set.")
 
 (defvar makey-custom-options nil
   "List of custom options to pass to Git.
@@ -494,13 +502,17 @@ Do not customize this (used in the `makey-key-mode' implementation).")
                (push (concat k v) makey-custom-options))
              makey-key-mode-current-args)
     (let ((local-let-cells '())
-          (current-variables (copy-hash-table makey-key-mode-current-variables)))
+          (current-variables (copy-hash-table makey-key-mode-current-lisp-arguments))
+          (current-lisp-switches (copy-alist makey-key-mode-current-lisp-options)))
       (set-window-configuration makey-pre-key-mode-window-conf)
       (kill-buffer makey-key-mode-last-buffer)
       (maphash (lambda (k v)
                  (add-to-list 'local-let-cells
                               (list (intern k) v)))
                current-variables)
+      (dolist (lisp-option current-lisp-switches)
+        (add-to-list 'local-let-cells (list (intern (car lisp-option))
+                                            (cdr lisp-option))))
       (eval `(let* ,local-let-cells
                (when func
                  (call-interactively func)))))
@@ -509,7 +521,7 @@ Do not customize this (used in the `makey-key-mode' implementation).")
 
 (defun makey-key-mode-add-lisp-variable (for-group lisp-variable-name input-func)
   (let ((input (funcall input-func (concat lisp-variable-name ": "))))
-    (puthash lisp-variable-name input makey-key-mode-current-variables)
+    (puthash lisp-variable-name input makey-key-mode-current-lisp-arguments)
     (makey-key-mode-redraw for-group)))
 
 (defun makey-key-mode-add-argument (for-group arg-name input-func)
@@ -523,6 +535,20 @@ Do not customize this (used in the `makey-key-mode' implementation).")
       (setq makey-key-mode-current-options
             (delete option-name makey-key-mode-current-options))
     (add-to-list 'makey-key-mode-current-options option-name))
+  (makey-key-mode-redraw for-group))
+
+
+(defun makey-key-mode-toggle-lisp-option (for-group option-name option-value-on option-value-off)
+  "Toggles the appearance of OPTION-NAME in `makey-key-mode-current-lisp-options'.
+
+Toggles between OPTION-VALUE-ON and OPTION-VALUE-OFF"
+  (if (cdr (assoc option-name makey-key-mode-current-lisp-options))
+      ;; remove then re-add with off key
+      (progn
+        (setq makey-key-mode-current-lisp-options
+              (assq-delete-all option-name makey-key-mode-current-lisp-options))
+        (add-to-list 'makey-key-mode-current-lisp-options (cons option-name option-value-off)))
+    (add-to-list 'makey-key-mode-current-lisp-options (cons option-name option-value-on)))
   (makey-key-mode-redraw for-group))
 
 ;;; Mode
@@ -558,10 +584,13 @@ the key combination highlighted before the description."
           'makey-key-mode-current-options)
          original-opts)
     (set (make-local-variable
+          'makey-key-mode-current-lisp-options)
+         original-opts)
+    (set (make-local-variable
           'makey-key-mode-current-args)
          (make-hash-table))
     (set (make-local-variable
-          'makey-key-mode-current-variables)
+          'makey-key-mode-current-lisp-arguments)
          (make-hash-table))
     (set (make-local-variable 'makey-key-mode-prefix) current-prefix-arg)
     (makey-key-mode-redraw for-group))
@@ -636,14 +665,15 @@ the key combination highlighted before the description."
                          'face 'makey-key-mode-args-face)))
    (not makey-key-mode-args-in-cols)))
 
-(defun makey-key-mode-draw-switches (switches)
+(defun makey-key-mode-draw-switches (switches switch-variable)
   "Draw the switches part of the menu."
   (makey-key-mode-draw-buttons
    "Switches"
    switches
    (lambda (x)
-     (format "(%s)" (let ((s (nth 2 x)))
-                      (if (member s makey-key-mode-current-options)
+     (format "(%s)" (let* ((sym (nth 2 x))
+                           (s (if (symbolp sym) (symbol-name sym) sym)))
+                      (if (cdr (assoc sym switch-variable))
                           (propertize s 'face 'makey-key-mode-switch-face)
                         s))))))
 
@@ -691,14 +721,17 @@ each item on one line."
 Return the point before the actions part, if any, nil otherwise."
   (let* ((options (makey-key-mode-options-for-group for-group))
          (switches (cdr (assoc 'switches options)))
+         (lisp-switches (cdr (assoc 'lisp-switches options)))
          (arguments (cdr (assoc 'arguments options)))
          (lisp-arguments (cdr (assoc 'lisp-arguments options)))
          (description (cdr (assoc 'description options)))
          (actions (cdr (assoc 'actions options)))
          (p nil))
-    (makey-key-mode-draw-switches switches)
+    (makey-key-mode-draw-switches switches makey-key-mode-current-options)
+    (makey-key-mode-draw-switches lisp-switches makey-key-mode-current-lisp-options)
+
     (makey-key-mode-draw-args arguments makey-key-mode-current-args)
-    (makey-key-mode-draw-args lisp-arguments makey-key-mode-current-variables)
+    (makey-key-mode-draw-args lisp-arguments makey-key-mode-current-lisp-arguments)
     (when actions (setq p (point-marker)))
     (makey-key-mode-draw-actions actions)
     (setq header-line-format description)
@@ -725,13 +758,16 @@ Return the point before the actions part, if any, nil otherwise."
         (interactive)
         (makey-key-mode
          (quote ,group-name)
-         ;; As a tempory kludge it is okay to do this here.
-         ,(cl-case group-name
-            (logging
-             '(list "--graph"))
-            (diff-options
-             '(when (local-variable-p 'makey-diff-options)
-                makey-diff-options))))))))
+         (list ,(dolist (switch (cdr (assoc 'lisp-switches group-details)))
+                 (cons (nth 2 switch) (symbol-value (nth 2 switch)))
+            ))
+         ;; ,(cl-case group-name
+         ;;    (logging
+         ;;     '(list "--graph"))
+         ;;    (diff-options
+         ;;     '(when (local-variable-p 'makey-diff-options)
+         ;;        makey-diff-options)))
+         )))))
 
 (defun makey-initialize-key-groups (key-group)
   "Initializes KEY-GROUP and creates all the relevant interactive commands."
@@ -759,7 +795,7 @@ Return the point before the actions part, if any, nil otherwise."
 ;;                                                           "single-column" "verbose" "vertical")))))
 ;;                                )))
 
-;;;###autoload (mapc (lambda (g) (eval `(autoload ',(intern (concat "makey-key-mode-popup-" (symbol-name (car g)))) "makey-key-mode" ,(concat "Key menu for " (symbol-name (car g))) t))) makey-key-mode-groups)
+;;;;###autoload (mapc (lambda (g) (eval `(autoload ',(intern (concat "makey-key-mode-popup-" (symbol-name (car g)))) "makey-key-mode" ,(concat "Key menu for " (symbol-name (car g))) t))) makey-key-mode-groups)
 
 (provide 'makey-key-mode)
 ;; Local Variables:
