@@ -416,10 +416,11 @@ the key combination highlighted before the description."
    "Args"
    args
    (lambda (x)
-     (format "(%s) %s"
-             (nth 2 x)
-             (propertize (gethash (nth 2 x) hash-table "")
-                         'face 'makey-key-mode-args-face)))
+     (let* ((arg (nth 2 x))
+            (value (gethash arg hash-table "")))
+       (format "(%s) %s" arg
+               (propertize (if (numberp value) (int-to-string value) value)
+                           'face 'makey-key-mode-args-face))))
    (not makey-key-mode-args-in-cols)))
 
 (defun makey-key-mode-draw-switches (switches switch-variable)
