@@ -270,7 +270,7 @@ Do not customize this (used in the `makey-key-mode' implementation).")
                               (list (intern k) v)))
                current-variables)
       (dolist (lisp-option current-lisp-switches)
-        (add-to-list 'local-let-cells (list (intern (car lisp-option))
+        (add-to-list 'local-let-cells (list (car lisp-option)
                                             (cdr lisp-option))))
       (eval `(let* ,local-let-cells
                (when func
@@ -301,7 +301,6 @@ Do not customize this (used in the `makey-key-mode' implementation).")
 
 Toggles between OPTION-VALUE-ON and OPTION-VALUE-OFF"
   (if (cdr (assoc option-name makey-key-mode-current-lisp-options))
-      ;; remove then re-add with off key
       (progn
         (setq makey-key-mode-current-lisp-options
               (assq-delete-all option-name makey-key-mode-current-lisp-options))
@@ -505,7 +504,11 @@ Return the point before the actions part, if any, nil otherwise."
 
 (defun makey-key-mode-generate (group-name group-details)
   "Generate the key-group-name menu for GROUP."
-  (let ((opts group-details))
+  (let* ((opts group-details)
+        (lisp-variable-alist))
+    (list (dolist (switch (cdr (assoc 'lisp-switches group-details)))
+            (add-to-list 'lisp-variable-alist
+                         (cons (nth 2 switch) (symbol-value (nth 2 switch))))))
     (eval
      `(defun ,(intern (concat "makey-key-mode-options-for-" (symbol-name group-name))) nil
         ,(concat "Options menu helper function for " (symbol-name group-name))
@@ -516,16 +519,7 @@ Return the point before the actions part, if any, nil otherwise."
         (interactive)
         (makey-key-mode
          (quote ,group-name)
-         (list ,(dolist (switch (cdr (assoc 'lisp-switches group-details)))
-                 (cons (nth 2 switch) (symbol-value (nth 2 switch)))
-            ))
-         ;; ,(cl-case group-name
-         ;;    (logging
-         ;;     '(list "--graph"))
-         ;;    (diff-options
-         ;;     '(when (local-variable-p 'makey-diff-options)
-         ;;        makey-diff-options)))
-         )))))
+         ',lisp-variable-alist)))))
 
 (defun makey-initialize-key-groups (key-group)
   "Initializes KEY-GROUP and creates all the relevant interactive commands."
