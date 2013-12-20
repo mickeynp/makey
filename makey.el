@@ -479,7 +479,7 @@ each item on one line."
 
 (defun makey-get-actions (for-group)
   "Returns a list of actions in FOR-GROUP"
-  (loop
+  (cl-loop
    for sub-group in (cdr (assoc 'actions for-group))
    append (cdr sub-group) into action-items finally return action-items))
 
