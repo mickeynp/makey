@@ -90,7 +90,9 @@ The option may be a switch, argument or action."
   (catch 'result
     (let ((options (makey-key-mode-options-for-group for-group)))
       (dolist (type '(actions switches arguments))
-        (when (assoc key (assoc type options))
+        (when (assoc key (if (eq type 'actions)
+                             (makey-get-actions options)
+                           (assoc type options)))
           (throw 'result t))))))
 
 (defun makey-key-mode-update-group (for-group thing &rest args)
@@ -138,7 +140,8 @@ The user is prompted for the key."
                        (if man-page
                            (format ", `?' for man `%s'" man-page)
                          ""))))
-         (actions (cdr (assoc 'actions opts))))
+         (actions (makey-get-actions
+                   (makey-key-mode-options-for-group for-group))))
     (cond
      ;; if it is an action popup the help for the to-be-run function
      ((assoc seq actions) (describe-function (nth 2 (assoc seq actions))))
@@ -178,7 +181,7 @@ These keymaps are created using `define-key' as they're requested.")
   "Construct a normal looking keymap for the key mode to use.
 Put it in `makey-key-mode-keymaps' for fast lookup."
   (let* ((options (makey-key-mode-options-for-group for-group))
-         (actions (cdr (assoc 'actions options)))
+         (actions (makey-get-actions options))
          (switches (cdr (assoc 'switches options)))
          (lisp-switches (cdr (assoc 'lisp-switches options)))
          (arguments (cdr (assoc 'arguments options)))
@@ -473,6 +476,12 @@ each item on one line."
             (insert padding))))
       (setq strings (cdr strings))))
   (insert "\n"))
+
+(defun makey-get-actions (for-group)
+  "Returns a list of actions in FOR-GROUP"
+  (loop
+   for sub-group in (cdr (assoc 'actions for-group))
+   append (cdr sub-group) into action-items finally return action-items))
 
 (defun makey-key-mode-draw (for-group)
   "Draw actions, switches and parameters.
