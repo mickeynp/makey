@@ -435,9 +435,9 @@ the key combination highlighted before the description."
                           (propertize s 'face 'makey-key-mode-switch-face)
                         s))))))
 
-(defun makey-key-mode-draw-actions (actions)
+(defun makey-key-mode-draw-actions (header actions)
   "Draw the actions part of the menu."
-  (makey-key-mode-draw-buttons "Actions" actions nil))
+  (makey-key-mode-draw-buttons (format "%s Actions" header) actions nil))
 
 (defun makey-key-mode-draw-buttons (section xs maker
                                             &optional one-col-each)
@@ -491,7 +491,8 @@ Return the point before the actions part, if any, nil otherwise."
     (makey-key-mode-draw-args arguments makey-key-mode-current-args)
     (makey-key-mode-draw-args lisp-arguments makey-key-mode-current-lisp-arguments)
     (when actions (setq p (point-marker)))
-    (makey-key-mode-draw-actions actions)
+    (dolist (action actions)
+      (makey-key-mode-draw-actions (car action) (cdr action)))
     (setq header-line-format description)
     (insert "\n")
     p))
