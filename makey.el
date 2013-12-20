@@ -110,12 +110,12 @@ The option may be a switch, argument or action."
 
 (defun makey-key-mode-insert-argument (for-group key desc arg read-func)
   "Add a new binding KEY in FOR-GROUP which will use READ-FUNC
-to receive input to apply to argument ARG git is run.  DESC should
+to receive input to apply to argument ARG is run.  DESC should
 be a brief description of the binding."
   (makey-key-mode-update-group for-group 'arguments key desc arg read-func))
 
 (defun makey-key-mode-insert-switch (for-group key desc switch)
-  "Add a new binding KEY in FOR-GROUP which will add SWITCH to git's
+  "Add a new binding KEY in FOR-GROUP which will add SWITCH to the
 command line when it runs.  DESC should be a brief description of
 the binding."
   (makey-key-mode-update-group for-group 'switches key desc switch))
@@ -254,7 +254,7 @@ These will get let-bound when an action is called")
   "Current option set.")
 
 (defvar makey-custom-options nil
-  "List of custom options to pass to Git.
+  "List of custom options to pass to the command line.
 Do not customize this (used in the `makey-key-mode' implementation).")
 
 (defun makey-key-mode-command (func)
