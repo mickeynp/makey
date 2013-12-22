@@ -542,8 +542,8 @@ Return the point before the actions part, if any, nil otherwise."
 
 ;;;;###autoload (mapc (lambda (g) (eval `(autoload ',(intern (concat "makey-key-mode-popup-" (symbol-name (car g)))) "makey-key-mode" ,(concat "Key menu for " (symbol-name (car g))) t))) makey-key-mode-groups)
 
-(provide 'makey-key-mode)
+(provide 'makey)
 ;; Local Variables:
 ;; indent-tabs-mode: nil
 ;; End:
-;;; makey-key-mode.el ends here
+;;; makey.el ends here
