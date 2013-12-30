@@ -5,6 +5,7 @@
 
 ;; Author: Mickey Petersen <mickey@masteringemacs.org>
 ;; Keywords:
+;; Version: 0.2
 ;; Package-Requires: ((cl-lib "0.2"))
 
 ;; This program is free software; you can redistribute it and/or modify
